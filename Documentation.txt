@@ -1,0 +1,27 @@
+Documentation:
+
+------------
+rda Objects:
+------------
+modelFit_rf -> 5.35% error rate, Random Forest with ntree=50, worked on aprox. 
+  1500 entires
+modelFit_rf_2nd -> 3.69% error rate, random forest with ntree=500, worked on aprox. 25201 entries
+
+h2o_nn_1st ->First has two layers of 60 nodes with an accuracy of 0.9574,
+  error of 4.26%, on 25201 entires
+h2o_nn_2nd ->Second has five layers of 20 nodes with an accuracy of 0.6807
+  error of 31.93%, on 25201 entires
+h2o_nn_3rd ->Third has three layers of 784 nodes with an accuracy of 0.9665
+  error of 3.35%, on 25201 entires
+h2o_nn_4th -> Fourth had two layers of 458 and 92 with an error of 3.581635%
+
+h2o_nn_rectifier -> two layers of 458 and 92, rectifier activation function, built in h2o, split 0.75/0.25 for training/validation, error of 3.257763%
+
+-----------------------------------------
+Determining the size of a neural network:
+-----------------------------------------
+Huang-Method (2003?)
+First-Layer: √( (m+2)N ) + 2√( N/(m+2) )
+Second-Layer: m√( N/(m+2) )
+N is the number of samples/entries in the training set
+m is the number of output neurons

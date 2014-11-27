@@ -1,0 +1,3 @@
+'Rectifier' method with changing epoch values:
+  • epoch of 1 -> error of 0.07692308 on validation (30% of total data)
+  • epoch of 10 -> error of 0.0311979 on validation (30% of total data)

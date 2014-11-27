@@ -1,0 +1,33 @@
+Notes On h2o Deep Learning:
+---------------------------
+
+11/09/2014:
+  The best method is still a straight neural network with no extra unfform adaption bits! who knew
+
+• setting to near zero variance resulted in an accuracy of 0.9542235 as opposed to without near zero variance, which gave 0.9654146.
+  - mat_huang_nearZeroVar for first information
+  - mat_huang for second information
+
+• With the adaptive rate, the accuracy was 0.82936961
+  - mat_huang_adapt for information
+  - split the validation/training to 0.25/0.75
+  - changing epsilon to 1e-10 (from 1e-6) gives accuracy of 0.96262596 (mat_huang_adapt_epineg10)
+  - changing the rho to 0.9 from 0.999 gives 0.9419890 (mat_huang_rho1)
+
+• initial_weight_distribution= option tinkered with:
+  - 'Normal' gives accuracy of ... ()
+  - 'Uniform' gives accuracy of 0.89874262 (wtf, this sucked)
+  - 'UniformAdaptive' gives
+
+• Playing around with the activation function:
+  - 'Maxout' is awful, gives error of 26.77653% 
+  - 'Rectifier' gives error of 3.257763%
+  - 'RectifierWithDropout' gives error of 0.04772338
+  • 'Rectifier'
+    - with l2 = 1e-6, error of 0.0350543
+    - with l2 = 1e-10, error of 
+  - 'Tanh' gives error of 
+
+• L1 & L2 regularization bits
+  - l1 causes many weights to become zero
+  - l2 causes many weights to be small
