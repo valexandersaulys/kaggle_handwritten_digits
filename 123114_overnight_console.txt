@@ -1,0 +1,109 @@
+R version 3.1.2 (2014-10-31) -- "Pumpkin Helmet"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+Revolution R Open 8.0.1 beta3
+The enhanced R distribution from Revolution Analytics
+Visit mran.revolutionanalytics.com/open for information
+about additional features and technical support options.
+
+[Workspace loaded from ~/workspace/Kaggle_Projects/Kaggle_Handwritten_digits/.RData]
+
+> library(e1071)
+> library(kernlab)
+> set.seed(2094)
+> set = read.csv('train.csv')
+> set$label <- as.factor(set$label)
+> backup <- set
+> 
+> # Register the Multiple Cores
+> library(doMC)
+Loading required package: foreach
+foreach: simple, scalable parallel programming from Revolution Analytics
+Use Revolution R for scalability, fault tolerance and more.
+http://www.revolutionanalytics.com
+Loading required package: iterators
+Loading required package: parallel
+> registerDoMC(7)   # I keep one open to run the systm stuff
+> 
+> ##########################
+> ########## Doing Pre-Processing
+> set <- set[, -nearZeroVar(set)]
+> #prepped_set <- preProcess(x=set[,2:785], 
+> #                          method = c("center", "scale"), 
+>  #                         #thresh = 0.95, #overridden with pcaComp
+>   #                        pcaComp = 256,   # For a 16x16 image, thats the idea anyway
+>    #                       na.remove = TRUE,
+>     #                      k = 5,
+>      #                     knnSummary = mean,
+>       #                    outcome = NULL,
+>        #                   fudge = .2,
+>         #                  numUnique = 3,
+>          #                 verbose = FALSE
+>           #              )
+> #set <- prepped_set$rotation
+> 
+> dataPartition <- createDataPartition(set$label, p = 0.6, list = FALSE)[, 1]
+> training <- set[dataPartition, ]
+> validate <- set[-dataPartition, ]
+> 
+> #tryer <- createDataPartition(set$label,p=0.01,list=FALSE)[, 1]
+> #little_try <- set[tryer, ]
+> #big_try <- set[-tryer,]
+> 
+> ###########################
+> ########## Setting up Train Control
+> MyTrainControl <- trainControl(
++   method = "repeatedcv",
++   number=10,
++   repeats=5,
++   returnResamp = "all",
++   classProbs = TRUE
++ ) 
+> 
+> ##########################
+> ########## Doing the model fit
+> system.time( modelFit_svm <- train(
++   x=training[,2:253],
++   y=training[,1],
++   method="svmRadial",
++   #preProcess = c("center", "scale"),
++   #tuneLength = 10,
++   trControl=MyTrainControl,
++   #scale = FALSE,
++   #probability=TRUE,
++   tuneGrid=data.frame(sigma=0.1, C=1)
++   ) )     # the system.time estimates the time of completion
+maximum number of iterations reached 0.0003812561 -8.875392e-09maximum number of iterations reached 0.001270777 -2.613324e-06maximum number of iterations reached 1.346557e-05 1.719955e-06maximum number of iterations reached 1.330312e-05 1.368098e-07maximum number of iterations reached 1.13914e-05 -7.508553e-07     user    system   elapsed 
+236043.19    206.67  41727.01 
+Warning message:
+In train.default(x = training[, 2:253], y = training[, 1], method = "svmRadial",  :
+  At least one of the class levels are not valid R variables names; This may cause errors if class probabilities are generated because the variables names will be converted to: X0, X1, X2, X3, X4, X5, X6, X7, X8, X9
+> 
+> training['pred1'] <- predict(modelFit_svm, newdata=training)
+Warning message:
+In method$predict(modelFit = modelFit, newdata = newdata, submodels = param) :
+  kernlab class prediction calculations failed; returning NAs
+> confusionMatrix(data=training$pred1,reference=training$label)
+Error in binom.test(sum(diag(x)), sum(x)) : 
+  'n' must be a positive integer >= 'x'
+> validation['pred1'] <- predict(modelFit_svm, newdata=validation)
+Error in predict.train(modelFit_svm, newdata = validation) : 
+  object 'validation' not found
+> confusionMatrix(data=validation$pred1,reference=validation$label)
+Error in confusionMatrix(data = validation$pred1, reference = validation$label) : 
+  object 'validation' not found

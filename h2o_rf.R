@@ -5,7 +5,7 @@ library(caret)
 set.seed(2094)
 
 # Setup the h2o server
-localH2O <- h2o.init(Xmx='8g')
+localH2O <- h2o.init(Xmx='12g')
 
 # First to import and look at the data
 set <- read.csv('train.csv')
@@ -14,8 +14,8 @@ training <- set[dataPartition, ]
 validate <- set[-dataPartition, ]
 
 # Normalizing the data between 
-training[2:785] <- (training[2:785] / (max(training)*2)) - 1
-validate[2:785] <- (validate[2:785] / (max(validate)*2)) - 1
+#training[2:785] <- (training[2:785] / (max(training)*2)) - 1
+#validate[2:785] <- (validate[2:785] / (max(validate)*2)) - 1
 
 train.h2o <- as.h2o(localH2O, training, key='train.hex')
 validate.h2o <- as.h2o(localH2O, validate, key='valid.hex')
